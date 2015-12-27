@@ -8,19 +8,6 @@ from tests.models import (
     Book,
 )
 
-replace_author_diff = [
-    {
-        'op': 'replace',
-        'path': '/1/id',
-        'value': 3
-    },
-    {
-        'op': 'replace',
-        'path': '/1/name',
-        'value': 'Janet'
-    }
-]
-
 
 class TestPatch(TestCase):
 
