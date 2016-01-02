@@ -112,6 +112,25 @@ class TestPatchAddOperation(TestCase):
         books = Book.objects.filter(author=author).all()
         self.assertEqual(books[0].title, 'Book one')
 
+    def test_exception_throw_when_adding_invalid_path(self):
+        add_author_diff = [
+            {
+                'op': 'add',
+                'path': '/0/books/0',
+                'value': {
+                    'id': 1,
+                    'title': 'Book one',
+                    'author': 1
+                }
+            }
+        ]
+
+        patch = Patch(add_author_diff)
+        authors = Author.objects.all()
+
+        with self.assertRaises(PointerException):
+            patch.apply(authors)
+
 
 class TestPatchReplaceOperation(TestCase):
 
