@@ -5,6 +5,10 @@ from .exceptions import PointerException
 
 
 class Pointer(object):
+    """
+    JSON Pointer defines a string syntax for identifying a specific value
+    within a JavaScript Object Notation (JSON) document.
+    """
 
     def __init__(self, path):
         self.path = path

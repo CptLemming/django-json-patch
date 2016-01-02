@@ -10,6 +10,13 @@ from .exceptions import PatchException
 
 
 class Patch(object):
+    """
+    JSON Patch defines a JSON document structure for expressing a
+    sequence of operations to apply to a JavaScript Object Notation
+    (JSON) document; it is suitable for use with the HTTP PATCH method.
+    The "application/json-patch+json" media type is used to identify such
+    patch documents.
+    """
     operation_types = {
         'add': AddOperation,
         'copy': CopyOperation,
