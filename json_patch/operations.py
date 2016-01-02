@@ -38,6 +38,13 @@ class PatchOperation(object):
 
 
 class ReplaceOperation(PatchOperation):
+    """
+    The "replace" operation replaces the value at the target location
+    with a new value. The operation object MUST contain a "value" member
+    whose content specifies the replacement value.
+
+    { "op": "replace", "path": "/a/b/c", "value": 42 }
+    """
 
     def apply(self, obj, save=True):
         obj, attribute = self.pointer.to_last(obj)
@@ -60,6 +67,21 @@ class ReplaceOperation(PatchOperation):
 
 
 class AddOperation(PatchOperation):
+    """
+    The "add" operation performs one of the following functions,
+    depending upon what the target location references:
+
+        - If the target location specifies an array index, a new value is
+          inserted into the array at the specified index.
+
+        - If the target location specifies an object member that does not
+          already exist, a new member is added to the object.
+
+        - If the target location specifies an object member that does exist,
+          that member's value is replaced.
+
+    { "op": "add", "path": "/a/b/c", "value": [ "foo", "bar" ] }
+    """
 
     def apply(self, obj, save=True):
         obj, attribute = self.pointer.to_last(obj)
@@ -91,6 +113,11 @@ class AddOperation(PatchOperation):
 
 
 class RemoveOperation(PatchOperation):
+    """
+    The "remove" operation removes the value at the target location.
+
+    { "op": "remove", "path": "/a/b/c" }
+    """
 
     def apply(self, obj, save=True):
         obj, attribute = self.pointer.to_last(obj)
@@ -115,14 +142,40 @@ class RemoveOperation(PatchOperation):
 
 
 class MoveOperation(PatchOperation):
+    """
+    The "move" operation removes the value at a specified location and
+    adds it to the target location.
+
+    The operation object MUST contain a "from" member, which is a string
+    containing a JSON Pointer value that references the location in the
+    target document to move the value from.
+
+    { "op": "move", "from": "/a/b/c", "path": "/a/b/d" }
+    """
     pass
 
 
 class CopyOperation(PatchOperation):
+    """
+    The "copy" operation copies the value at a specified location to the
+    target location.
+
+    The operation object MUST contain a "from" member, which is a string
+    containing a JSON Pointer value that references the location in the
+    target document to copy the value from.
+
+    { "op": "copy", "from": "/a/b/c", "path": "/a/b/e" }
+    """
     pass
 
 
 class TestOperation(PatchOperation):
+    """
+    The "test" operation tests that a value at the target location is
+    equal to a specified value.
+
+    { "op": "test", "path": "/a/b/c", "value": "foo" }
+    """
 
     def apply(self, obj, save=True):
         obj = self.pointer.resolve(obj)
