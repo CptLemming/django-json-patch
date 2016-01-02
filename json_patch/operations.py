@@ -123,4 +123,10 @@ class CopyOperation(PatchOperation):
 
 
 class TestOperation(PatchOperation):
-    pass
+
+    def apply(self, obj, save=True):
+        obj = self.pointer.resolve(obj)
+
+        if obj != self.value:
+            raise PatchException('Value does not match: Expected {0}, got {1}'.format(
+                obj, self.value))

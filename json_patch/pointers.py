@@ -1,5 +1,5 @@
 from django.core.exceptions import FieldDoesNotExist
-from django.db.models import ForeignKey, ManyToOneRel, QuerySet
+from django.db.models import ManyToOneRel, QuerySet
 
 from .exceptions import PointerException
 
@@ -31,12 +31,14 @@ class Pointer(object):
             # Get item from queryset / list
             try:
                 obj = obj[int(part)]
+            except IndexError:
+                raise PointerException('Index does not exist: {0}'.format(part))
             except ValueError:
                 raise PointerException('Index is not an int: {0}'.format(part))
         else:
             # Navigate relationship
             if not hasattr(obj, '_meta'):
-                raise PointerException('replace_operation: Expected a model, got {0}'.format(
+                raise PointerException('process_part: Expected a model, got {0}'.format(
                     type(obj)))
 
             try:
@@ -44,11 +46,8 @@ class Pointer(object):
             except FieldDoesNotExist:
                 field = None
 
-            if isinstance(field, ForeignKey):
-                obj = getattr(obj, part)
-            elif isinstance(field, ManyToOneRel):
+            if isinstance(field, ManyToOneRel):
                 obj = getattr(obj, part).all()
             else:
-                raise PointerException('replace_operation: Unknown field type {0}:{1}]'.format(
-                    type(part), part))
+                obj = getattr(obj, part)
         return obj

@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from json_patch.exceptions import PatchException
+from json_patch.exceptions import PatchException, PointerException
 from json_patch.operations import AddOperation
 from json_patch.patch import Patch
 from tests.models import (
@@ -230,3 +230,51 @@ class TestPatchRemoveOperation(TestCase):
 
         book_count = Book.objects.all().count()
         self.assertEqual(book_count, 0)
+
+
+class TestPatchTestOperation(TestCase):
+
+    def test_no_error_when_author_name_matches(self):
+        Author.objects.create(name='Jeff')
+
+        test_author_name_diff = [
+            {
+                'op': 'test',
+                'path': '/0/name',
+                'value': 'Jeff'
+            }
+        ]
+
+        patch = Patch(test_author_name_diff)
+        authors = Author.objects.all()
+        patch.apply(authors)
+
+    def test_exception_thrown_when_author_name_does_not_match(self):
+        Author.objects.create(name='Jeff')
+
+        test_author_name_diff = [
+            {
+                'op': 'test',
+                'path': '/0/name',
+                'value': 'Bob'
+            }
+        ]
+
+        patch = Patch(test_author_name_diff)
+        authors = Author.objects.all()
+        with self.assertRaises(PatchException):
+            patch.apply(authors)
+
+    def test_exception_thrown_when_path_does_not_exist(self):
+        test_author_name_diff = [
+            {
+                'op': 'test',
+                'path': '/0/name',
+                'value': 'Jeff'
+            }
+        ]
+
+        patch = Patch(test_author_name_diff)
+        authors = Author.objects.all()
+        with self.assertRaises(PointerException):
+            patch.apply(authors)
