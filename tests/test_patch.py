@@ -249,6 +249,37 @@ class TestPatchTestOperation(TestCase):
         authors = Author.objects.all()
         patch.apply(authors)
 
+    def test_no_error_when_author_id_value_and_type_matches(self):
+        Author.objects.create(name='Jeff')
+
+        test_author_name_diff = [
+            {
+                'op': 'test',
+                'path': '/0/id',
+                'value': 1
+            }
+        ]
+
+        patch = Patch(test_author_name_diff)
+        authors = Author.objects.all()
+        patch.apply(authors)
+
+    def test_exception_thrown_when_author_id_value_matches_but_type_does_not(self):
+        Author.objects.create(name='Jeff')
+
+        test_author_name_diff = [
+            {
+                'op': 'test',
+                'path': '/0/id',
+                'value': '1'
+            }
+        ]
+
+        patch = Patch(test_author_name_diff)
+        authors = Author.objects.all()
+        with self.assertRaises(PatchException):
+            patch.apply(authors)
+
     def test_exception_thrown_when_author_name_does_not_match(self):
         Author.objects.create(name='Jeff')
 
