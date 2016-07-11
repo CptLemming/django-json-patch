@@ -10,7 +10,7 @@ django-json-patch
 Documentation
 -------------
 
-The full documentation is at https://django-json-patch.readthedocs.org.
+The full documentation is at https://django-json-patch.readthedocs.io.
 
 Install
 -------
